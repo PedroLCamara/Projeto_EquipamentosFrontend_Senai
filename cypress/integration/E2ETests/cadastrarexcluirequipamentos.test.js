@@ -19,7 +19,7 @@ describe('Cadastro e exclusão de equipamentos', ()=>{
 
             cy.wait(3000)
 
-            cy.get('.card div span').first().should('have.text', 'Patrimônio: ')
+            cy.get('.card div span').first().should('have.text', 'Patrimônio: ' )
         })
     })
 })
