@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Cabecalho from "../../components/cabecalho";
 import Rodape from "../../components/rodape/rodape";
 import Titulo from "../../components/titulo/titulo";
@@ -10,41 +10,41 @@ import axios from 'axios';
 import { LerConteudoDaImagem } from "../../services/ocr";
 
 export const Patrimonio = () => {
-    
-    // Cadastrar
-    const[nomePatrimonio, setNomePatrimonio] = useState('');
-    const[descricao, setDescricao] = useState('');
-    const[imagem] = useState('');
-    const[dataCadastro] = useState('02/02/2022');
-    const[ativo, setAtivo] = useState(true);
 
-    // Listar
-    const[produtos, setProdutos] = useState([]);
+  // Cadastrar
+  const [nomePatrimonio, setNomePatrimonio] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [imagem] = useState('');
+  const [dataCadastro] = useState('02/02/2022');
+  const [ativo, setAtivo] = useState(true);
+
+  // Listar
+  const [produtos, setProdutos] = useState([]);
 
 
-    const Cadastrar = (event) => {
+  const Cadastrar = (event) => {
 
-      event.preventDefault();
-      
-      var formData = new FormData();
-      
-      const element = document.getElementById('arquivo')
-      const file = element.files[0]
-      formData.append('arquivo', file, file.name)
-      
-      formData.append('id', 0);
-      formData.append('imagem', imagem);
-      formData.append('descricao', descricao);
-      formData.append('ativo', ativo);
-      formData.append('dataCadastro', dataCadastro);
-      formData.append('nomePatrimonio', nomePatrimonio);
+    event.preventDefault();
 
-      axios({
-        method: "post",
-        url: "http://localhost:5000/api/Equipamentos",
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+    var formData = new FormData();
+
+    const element = document.getElementById('arquivo')
+    const file = element.files[0]
+    formData.append('arquivo', file, file.name)
+
+    formData.append('id', 0);
+    formData.append('imagem', imagem);
+    formData.append('descricao', descricao);
+    formData.append('ativo', ativo);
+    formData.append('dataCadastro', dataCadastro);
+    formData.append('nomePatrimonio', nomePatrimonio);
+
+    axios({
+      method: "post",
+      url: "http://localhost:5000/api/Equipamentos",
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
       .then(function (response) {
         console.log(response);
         Listar();
@@ -53,110 +53,110 @@ export const Patrimonio = () => {
         //handle error
         console.log(response);
       });
-    }
+  }
 
-    const Listar = () => {
-      axios.get('http://localhost:5000/api/Equipamentos')
+  const Listar = () => {
+    axios.get('http://localhost:5000/api/Equipamentos')
       .then(resposta => {
-        setProdutos(resposta.data);
+        setProdutos(resposta.data.listaEquipamentos);
       })
       .catch(erro => console.log(erro))
-    }
+  }
 
-    const Remover = (id) => {
-      axios.delete('http://localhost:5000/api/Equipamentos/'+id)
+  const Remover = (id) => {
+    axios.delete('http://localhost:5000/api/Equipamentos/' + id)
       .then(() => {
         Listar();
       })
       .catch(erro => console.log(erro))
-    }
+  }
 
-    const lerOCR = (event) => {
-      event.preventDefault();
+  const lerOCR = (event) => {
+    event.preventDefault();
 
-      var formData = new FormData();
-      const element = document.getElementById("Codigo");
-      const file = element.files[0];
-      formData.append("url", file, file.name);
-      
-      let ResultadoOCR = LerConteudoDaImagem(formData)
-      ResultadoOCR.then(res => setDescricao(res));
-    }
+    var formData = new FormData();
+    const element = document.getElementById("Codigo");
+    const file = element.files[0];
+    formData.append("url", file, file.name);
 
-    useEffect(() => {
-      Listar();      
-    },[]);
+    let ResultadoOCR = LerConteudoDaImagem(formData)
+    ResultadoOCR.then(res => setDescricao(res));
+  }
 
-    return(
-        <>
-          <Cabecalho />
-          <Titulo titulosecao="Patrimônios" />
-          <main className="container">
+  useEffect(() => {
+    Listar();      
+  },[]);
 
-            <h2>Adicionar Patrimônio</h2>
-            <form encType="multipart/form-data">
-              <input
-                className="input__login" 
-                type="text" 
-                name="nomePatrimonio" 
-                id="nomePatrimonio" 
-                placeholder="Nome do Patrimonio"
-                value={nomePatrimonio}
-                onChange={(e) => setNomePatrimonio(e.target.value)}
-              />
+  return (
+    <>
+      <Cabecalho />
+      <Titulo titulosecao="Patrimônios" />
+      <main className="container">
 
-              <input
-                className="input__login" 
-                type="text" 
-                name="nomePatrimonio" 
-                id="nomePatrimonio" 
-                placeholder="Código do Patrimonio"
-                value={descricao}
-                onChange={(e) => setDescricao(e.target.value)}
-              />
+        <h2>Adicionar Patrimônio</h2>
+        <form encType="multipart/form-data">
+          <input
+            className="input__login"
+            type="text"
+            name="nomePatrimonio"
+            id="nomePatrimonio"
+            placeholder="Nome do Patrimonio"
+            value={nomePatrimonio}
+            onChange={(e) => setNomePatrimonio(e.target.value)}
+          />
 
-              <input type="file" id="Codigo" accept="image/png, image/jpeg" onChange= {(e) => lerOCR(e)} /> 
+          <input
+            className="input__login"
+            type="text"
+            name="codigoPatrimonio"
+            id="codigoPatrimonio"
+            placeholder="Código do Patrimonio"
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+          />
 
-              <label htmlFor="ativo">
-              <input 
-                type="checkbox" 
-                name="ativo" 
-                id="ativo" 
-                checked={ativo} 
-                onChange={(e) => setAtivo(e.target.checked)} 
-              /> Produto ativo? 
-              </label>
+          <input type="file" id="Codigo" accept="image/png, image/jpeg" onChange={(e) => lerOCR(e)} />
 
-              <input type="file" id="arquivo" accept="image/png, image/jpeg" />
+          <label htmlFor="ativo">
+            <input
+              type="checkbox"
+              name="ativo"
+              id="ativo"
+              checked={ativo}
+              onChange={(e) => setAtivo(e.target.checked)}
+            /> Produto ativo?
+          </label>
 
-              <button 
-                type="submit" 
-                className="btn btn__cadastro"
-                onClick={(e) => Cadastrar(e)}
-              >
-                Cadastrar
-              </button>
+          <input type="file" id="arquivo" accept="image/png, image/jpeg" />
 
-            </form>
+          <button
+            type="submit"
+            className="btn btn__cadastro"
+            onClick={(e) => Cadastrar(e)}
+          >
+            Cadastrar
+          </button>
 
-            <h2>Lista de Patrimônios</h2>
+        </form>
 
-            {produtos.map(item => 
-              <div className="card" key={item.id}>
-                <img src={"http://localhost:5000/StaticFiles/Images/"+item.imagem} alt="" />
-                <div>
-                  <h4>{item.nomePatrimonio}</h4>
-                  <span>Patrimônio: {item.descricao}</span>
-                  <span>Cadastrado em {new Date(item.dataCadastro).toLocaleDateString()}</span>
-                </div>
-                <button className="excluir" onClick={() => Remover(item.id)}>Excluir</button>
-              </div>
-            )}
+        <h2>Lista de Patrimônios</h2>
 
-          </main>
-          <Rodape />
-        </>
-    )
+        {produtos.map(item => 
+          <div className="card" key={item.id}>
+            <img src={"http://localhost:5000/StaticFiles/Images/" + item.imagem} alt="" />
+            <div>
+              <h4>{item.nomePatrimonio}</h4>
+              <span>Patrimônio: {item.descricao}</span>
+              <span>Cadastrado em {new Date(item.dataCadastro).toLocaleDateString()}</span>
+            </div>
+            <button className="excluir" onClick={() => Remover(item.id)}>Excluir</button>
+          </div>
+        )}
+
+      </main>
+      <Rodape />
+    </>
+  )
 }
 
 export default Patrimonio;
